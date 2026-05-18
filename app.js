@@ -177,10 +177,34 @@ const response = await fetch(url);
 const data = await response.json();
 allWines = data;
 
+buildCaveSelect();
+renderWines(allWines);
+}
+
+function buildCaveSelect(){
+const caveSelect = document.getElementById("caveSelect");
+
+const caves = [...new Set(
+allWines
+.map(v => v["Emplacement"])
+.filter(Boolean)
+)];
+
+caves.sort();
+
+caves.forEach(cave=>{
+const option = document.createElement("option");
+option.value = cave;
+option.textContent = "🏠 " + cave;
+caveSelect.appendChild(option);
+});
+}
+
+function renderWines(wines){
 const wineList = document.getElementById("wineList");
 wineList.innerHTML = "";
 
-data.forEach(vin=>{
+wines.forEach(vin=>{
 const card = document.createElement("div");
 card.className = "card";
 
@@ -201,6 +225,18 @@ wineList.appendChild(card);
 });
 }
 
+function applyFilters(){
+const cave = document.getElementById("caveSelect").value;
+const search = document.getElementById("search").value.toLowerCase();
+
+const filtered = allWines.filter(vin=>{
+const matchCave = cave === "" || vin["Emplacement"] === cave;
+const matchSearch = JSON.stringify(vin).toLowerCase().includes(search);
+return matchCave && matchSearch;
+});
+
+renderWines(filtered);
+}
 function sortirBouteille(nomVin){
 if(confirm("Sortir 1 bouteille de : " + nomVin + " ?")){
 
@@ -229,7 +265,7 @@ card.style.display = card.innerText.includes(term) || term === "" ? "block" : "n
 });
 }
 
-document.getElementById("search").addEventListener("keyup", function(){
+document.getElementById("search").addEventListener("keyup", applyFilters);
 const value = this.value.toLowerCase();
 
 document.querySelectorAll(".card").forEach(card=>{
