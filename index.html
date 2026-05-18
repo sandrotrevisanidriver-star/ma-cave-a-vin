@@ -1,63 +1,66 @@
-index.html
-<script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma Cave à Vin</title>
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0;padding:20px;}
+h1{text-align:center;color:#7b1128;}
+.search{width:100%;padding:12px;margin-bottom:20px;border-radius:10px;border:none;font-size:16px;}
+.grid{display:grid;grid-template-columns:1fr;gap:15px;}
+.card{background:white;padding:15px;border-radius:15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+.card h2{margin:0;color:#7b1128;}
+.info{margin-top:10px;color:#444;line-height:1.5;}
+</style>
+</head>
 
+<body>
+
+<h1>🍷 Ma Cave à Vin</h1>
+
+<input type="text" class="search" id="search" placeholder="Rechercher un vin...">
+
+<div class="grid" id="wineList"></div>
+
+<script>
 const sheetID = "1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94";
 const url = `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 
 async function loadWines() {
+  const response = await fetch(url);
+  const data = await response.json();
+  const wineList = document.getElementById("wineList");
 
-const response = await fetch(url);
-const data = await response.json();
+  wineList.innerHTML = "";
 
-const wineList = document.getElementById("wineList");
-
-wineList.innerHTML = "";
-
-data.forEach(vin => {
-
-wineList.innerHTML += `
-<div class="card">
-
-<h2>${vin["Vin"] || ""}</h2>
-
-<div class="info">
-🍷 ${vin["Couleur/Type"] || ""}
-</div>
-
-<div class="info">
-📅 ${vin["Millésime"] || ""}<br>
-📦 Stock : ${vin["Quantité"] || ""}<br>
-🍾 ${vin["Contenance"] || ""}<br>
-🌍 ${vin["Région/Pays"] || ""}<br>
-📍 ${vin["Emplacement"] || ""}<br>
-⭐ ${vin["Particularités"] || ""}
-</div>
-
-</div>
-`;
-
-});
-
+  data.forEach(vin => {
+    wineList.innerHTML += `
+      <div class="card">
+        <h2>${vin["Vin"] || ""}</h2>
+        <div class="info">
+          🍷 ${vin["Couleur/Type"] || ""}<br>
+          📅 ${vin["Millésime"] || ""}<br>
+          📦 Stock : ${vin["Quantité"] || ""}<br>
+          🍾 ${vin["Contenance"] || ""}<br>
+          🌍 ${vin["Région/Pays"] || ""}<br>
+          📍 ${vin["Emplacement"] || ""}<br>
+          ⭐ ${vin["Particularités"] || ""}
+        </div>
+      </div>
+    `;
+  });
 }
 
 loadWines();
 
-const search = document.getElementById('search');
-
-search.addEventListener('keyup', function(){
-
-const value = search.value.toLowerCase();
-const cards = document.querySelectorAll('.card');
-
-cards.forEach(card=>{
-
-card.style.display =
-card.innerText.toLowerCase().includes(value)
-? 'block'
-: 'none';
-
+document.getElementById("search").addEventListener("keyup", function(){
+  const value = this.value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(value) ? "block" : "none";
+  });
 });
+</script>
 
-});
-
-</script></html></html>
+</body>
+</html>
