@@ -1,70 +1,8 @@
 index.html
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ma Cave à Vin</title>
-
-<style>
-body{
-font-family:Arial;
-background:#f4f4f4;
-margin:0;
-padding:20px;
-}
-
-h1{
-text-align:center;
-color:#7b1128;
-}
-
-.search{
-width:100%;
-padding:12px;
-margin-bottom:20px;
-border-radius:10px;
-border:none;
-font-size:16px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr;
-gap:15px;
-}
-
-.card{
-background:white;
-padding:15px;
-border-radius:15px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
-
-.card h2{
-margin:0;
-color:#7b1128;
-}
-
-.info{
-margin-top:10px;
-color:#444;
-}
-</style>
-</head>
-
-<body>
-
-<h1>🍷 Ma Cave à Vin</h1>
-
-<input type="text" class="search" id="search" placeholder="Rechercher un vin...">
-
-<div class="grid" id="wineList"></div>
-
 <script>
 
 const sheetID = "1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94";
-const url = `https://opensheet.elk.sh/1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94/Feuille%201`;
+const url = `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 
 async function loadWines() {
 
@@ -79,19 +17,22 @@ data.forEach(vin => {
 
 wineList.innerHTML += `
 <div class="card">
-<h2>${vin.Nom}</h2>
+
+<h2>${vin["Vin"] || ""}</h2>
 
 <div class="info">
-${vin.Couleur} • ${vin.Pays} • ${vin.Région}
+🍷 ${vin["Couleur/Type"] || ""}
 </div>
 
 <div class="info">
-📅 ${vin.Année} <br>
-📦 Stock : ${vin.Quantité} <br>
-💰 ${vin.Prix} CHF <br>
-📍 ${vin.Emplacement} <br>
-⭐ ${vin.Note}
+📅 ${vin["Millésime"] || ""}<br>
+📦 Stock : ${vin["Quantité"] || ""}<br>
+🍾 ${vin["Contenance"] || ""}<br>
+🌍 ${vin["Région/Pays"] || ""}<br>
+📍 ${vin["Emplacement"] || ""}<br>
+⭐ ${vin["Particularités"] || ""}
 </div>
+
 </div>
 `;
 
@@ -119,7 +60,4 @@ card.innerText.toLowerCase().includes(value)
 
 });
 
-</script>
-
-</body>
-</html></html>
+</script></html></html>
