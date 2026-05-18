@@ -266,12 +266,6 @@ card.style.display = card.innerText.includes(term) || term === "" ? "block" : "n
 }
 
 document.getElementById("search").addEventListener("keyup", applyFilters);
-const value = this.value.toLowerCase();
-
-document.querySelectorAll(".card").forEach(card=>{
-card.style.display = card.innerText.toLowerCase().includes(value) ? "block" : "none";
-});
-});
 
 document.getElementById("wineModal").addEventListener("click", function(e){
 if(e.target.id === "wineModal"){
