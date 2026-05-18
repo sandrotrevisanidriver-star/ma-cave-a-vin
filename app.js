@@ -244,8 +244,13 @@ return matchCave && matchSearch;
 renderWines(filtered);
 }
 function sortirBouteille(nomVin){
-if(confirm("Sortir 1 bouteille de : " + nomVin + " ?")){
-
+if(confirm(
+"⚠️ Confirmation\n\n" +
+"Es-tu sûr de vouloir sortir cette bouteille ?\n\n" +
+nomVin + "\n\n" +
+"Le stock sera diminué de 1."
+)){
+    
 fetch(stockUrl, {
 method: "POST",
 mode: "no-cors",
