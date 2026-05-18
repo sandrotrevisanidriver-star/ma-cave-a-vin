@@ -89,6 +89,23 @@ document.getElementById("modalContent").innerHTML = `
 <h3>🍷 Accords mets/vins</h3>
 <div class="info">${accords(vin)}</div>
 
+<a
+href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(vin['Vin'] + ' ' + vin['Millésime'])}"
+target="_blank"
+style="
+display:block;
+text-align:center;
+background:#b38b59;
+color:white;
+padding:12px;
+border-radius:20px;
+text-decoration:none;
+margin-top:15px;
+"
+>
+📸 Chercher une photo
+</a>
+
 <button class="close" onclick="closeModal()">Fermer</button>
 `;
 
