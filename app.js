@@ -160,6 +160,12 @@ document.getElementById("modalContent").innerHTML = `
 🍾 Sortir 1 bouteille du stock
 </button>
 
+<a class="photoLink"
+href="https://chat.openai.com/?q=${encodeURIComponent('Donne-moi des informations détaillées sur le vin ' + vin['Vin'] + ' ' + vin['Millésime'])}"
+target="_blank">
+🤖 Demander plus d'infos à ChatGPT
+</a>
+
 <button class="close" onclick="closeModal()">
 Fermer la fiche
 </button>
