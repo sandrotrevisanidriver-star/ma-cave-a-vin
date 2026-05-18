@@ -1,0 +1,118 @@
+index.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma Cave à Vin</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+color:#7b1128;
+}
+
+.search{
+width:100%;
+padding:12px;
+margin-bottom:20px;
+border-radius:10px;
+border:none;
+font-size:16px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr;
+gap:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card h2{
+margin:0;
+color:#7b1128;
+}
+
+.info{
+margin-top:10px;
+color:#444;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍷 Ma Cave à Vin</h1>
+
+<input type="text" class="search" id="search" placeholder="Rechercher un vin...">
+
+<div class="grid" id="wineList">
+
+<div class="card">
+<h2>Château Margaux 2018</h2>
+<div class="info">
+Rouge • France • Bordeaux
+</div>
+</div>
+
+<div class="card">
+<h2>Barolo Riserva 2016</h2>
+<div class="info">
+Rouge • Italie • Piémont
+</div>
+</div>
+
+<div class="card">
+<h2>Dom Pérignon 2013</h2>
+<div class="info">
+Champagne • France
+</div>
+</div>
+
+<div class="card">
+<h2>Ribera del Duero 2019</h2>
+<div class="info">
+Rouge • Espagne
+</div>
+</div>
+
+<div class="card">
+<h2>Chassagne-Montrachet 2020</h2>
+<div class="info">
+Blanc • Bourgogne
+</div>
+</div>
+
+</div>
+
+<script>
+const search = document.getElementById('search');
+const cards = document.querySelectorAll('.card');
+
+search.addEventListener('keyup', function(){
+const value = search.value.toLowerCase();
+
+cards.forEach(card=>{
+card.style.display =
+card.innerText.toLowerCase().includes(value)
+? 'block'
+: 'none';
+});
+});
+</script>
+
+</body>
+</html>
