@@ -19,7 +19,13 @@ h1{text-align:center;color:#7b1128;}
 
 <h1>🍷 Ma Cave à Vin</h1>
 
-<input type="text" class="search" id="search" placeholder="Rechercher un vin...">
+<input type="text" class="search" id="search" placeholder="Rechercher un <div class="filters">
+<button onclick="filterWine('')">Tous</button>
+<button onclick="filterWine('Rouge')">Rouges</button>
+<button onclick="filterWine('Blanc')">Blancs</button>
+<button onclick="filterWine('Champagne')">Champagnes</button>
+<button onclick="filterWine('Suisse')">Suisses</button>
+</div>
 
 <div class="grid" id="wineList"></div>
 
