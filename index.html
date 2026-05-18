@@ -212,12 +212,13 @@ document.getElementById("modalContent").innerHTML = `
 📸 Chercher une photo
 </a>
 
-<button class="close" onclick='sortirBouteille(${JSON.stringify(vin["Vin"] || "")})'>
-🍾 Sortir 1 bouteille
+<button class="close" style="background:#b38b59;" onclick='sortirBouteille(${JSON.stringify(vin["Vin"] || "")})'>
+🍾 Sortir 1 bouteille du stock
 </button>
 
-<button class="close" onclick="closeModal()">Fermer</button>
-`;
+<button class="close" onclick="closeModal()">
+Fermer la fiche
+</button>
 
 document.getElementById("wineModal").style.display = "block";
 }
