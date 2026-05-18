@@ -69,7 +69,63 @@ return "🍝 Pâtes, pizza, viande mijotée, charcuterie, parmesan.";
 if(texte.includes("rouge")){
 return "🍖 Viande rouge, grillades, plats mijotés, fromage.";
 }
-return "🍽️ Accord polyvalent : apéritif, fromage, plat convivial.";
+return "🍽️ Accord polyvalent : apéritif, fromage, plat function cepages(vin){
+
+const texte = (
+(vin["Couleur/Type"] || "") + " " +
+(vin["Région/Pays"] || "") + " " +
+(vin["Vin"] || "")
+).toLowerCase();
+
+if(texte.includes("bordeaux")){
+return "Cabernet Sauvignon, Merlot";
+}
+
+if(texte.includes("champagne")){
+return "Pinot Noir, Chardonnay, Meunier";
+}
+
+if(texte.includes("bourgogne")){
+return "Pinot Noir ou Chardonnay";
+}
+
+if(texte.includes("barolo")){
+return "Nebbiolo";
+}
+
+if(texte.includes("rioja")){
+return "Tempranillo";
+}
+
+if(texte.includes("sancerre")){
+return "Sauvignon Blanc";
+}
+
+if(texte.includes("pinot noir")){
+return "Pinot Noir";
+}
+
+if(texte.includes("petite arvine")){
+return "Petite Arvine";
+}
+
+if(texte.includes("amarone")){
+return "Corvina, Rondinella, Molinara";
+}
+
+if(texte.includes("chianti")){
+return "Sangiovese";
+}
+
+if(texte.includes("blanc")){
+return "Assemblage de cépages blancs";
+}
+
+if(texte.includes("rouge")){
+return "Assemblage de cépages rouges";
+}
+
+return "Cépages à déterminer";
 }
 
 function openModal(vin){
@@ -85,7 +141,8 @@ document.getElementById("modalContent").innerHTML = `
 📍 Emplacement : ${vin["Emplacement"] || ""}<br>
 ⭐ Particularités : ${vin["Particularités"] || ""}
 </div>
-
+<h3>🍇 Cépages</h3>
+<div class="info">${cepages(vin)}</div>
 <h3>🍷 Accords mets/vins</h3>
 <div class="info">${accords(vin)}</div>
 
