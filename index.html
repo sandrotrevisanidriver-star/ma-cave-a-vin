@@ -1,25 +1,93 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ma Cave à Vin</title>
+
 <style>
-body{font-family:Arial;background:#f4f4f4;margin:0;padding:20px;}
-h1{text-align:center;color:#7b1128;}
-.search{width:100%;padding:12px;margin-bottom:20px;border-radius:10px;border:none;font-size:16px;}
-.grid{display:grid;grid-template-columns:1fr;gap:15px;}
-.card{background:white;padding:15px;border-radius:15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
-.card h2{margin:0;color:#7b1128;}
-.info{margin-top:10px;color:#444;line-height:1.5;}
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+color:#7b1128;
+}
+
+.search{
+width:100%;
+padding:12px;
+margin-bottom:20px;
+border-radius:10px;
+border:none;
+font-size:16px;
+box-sizing:border-box;
+}
+
+.filters{
+display:flex;
+gap:10px;
+overflow:auto;
+margin-bottom:20px;
+padding-bottom:5px;
+}
+
+.filters button{
+background:#7b1128;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:20px;
+font-size:14px;
+white-space:nowrap;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr;
+gap:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card h2{
+margin:0;
+color:#7b1128;
+}
+
+.info{
+margin-top:10px;
+color:#444;
+line-height:1.6;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <h1>🍷 Ma Cave à Vin</h1>
 
-<input type="text" class="search" id="search" placeholder="Rechercher un <div class="filters">
+<input
+type="text"
+class="search"
+id="search"
+placeholder="Rechercher un vin..."
+>
+
+<div class="filters">
 <button onclick="filterWine('')">Tous</button>
 <button onclick="filterWine('Rouge')">Rouges</button>
 <button onclick="filterWine('Blanc')">Blancs</button>
@@ -30,42 +98,97 @@ h1{text-align:center;color:#7b1128;}
 <div class="grid" id="wineList"></div>
 
 <script>
+
 const sheetID = "1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94";
-const url = `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 
-async function loadWines() {
-  const response = await fetch(url);
-  const data = await response.json();
-  const wineList = document.getElementById("wineList");
+const url =
+`https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 
-  wineList.innerHTML = "";
+async function loadWines(){
 
-  data.forEach(vin => {
-    wineList.innerHTML += `
-      <div class="card">
-        <h2>${vin["Vin"] || ""}</h2>
-        <div class="info">
-          🍷 ${vin["Couleur/Type"] || ""}<br>
-          📅 ${vin["Millésime"] || ""}<br>
-          📦 Stock : ${vin["Quantité"] || ""}<br>
-          🍾 ${vin["Contenance"] || ""}<br>
-          🌍 ${vin["Région/Pays"] || ""}<br>
-          📍 ${vin["Emplacement"] || ""}<br>
-          ⭐ ${vin["Particularités"] || ""}
-        </div>
-      </div>
-    `;
-  });
+const response = await fetch(url);
+
+const data = await response.json();
+
+const wineList =
+document.getElementById("wineList");
+
+wineList.innerHTML = "";
+
+data.forEach(vin=>{
+
+wineList.innerHTML += `
+
+<div class="card">
+
+<h2>${vin["Vin"] || ""}</h2>
+
+<div class="info">
+
+🍷 ${vin["Couleur/Type"] || ""}<br>
+
+📅 ${vin["Millésime"] || ""}<br>
+
+📦 Stock : ${vin["Quantité"] || ""}<br>
+
+🍾 ${vin["Contenance"] || ""}<br>
+
+🌍 ${vin["Région/Pays"] || ""}<br>
+
+📍 ${vin["Emplacement"] || ""}<br>
+
+⭐ ${vin["Particularités"] || ""}
+
+</div>
+
+</div>
+
+`;
+
+});
+
 }
 
 loadWines();
 
-document.getElementById("search").addEventListener("keyup", function(){
-  const value = this.value.toLowerCase();
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = card.innerText.toLowerCase().includes(value) ? "block" : "none";
-  });
+document
+.getElementById("search")
+.addEventListener("keyup", function(){
+
+const value =
+this.value.toLowerCase();
+
+document
+.querySelectorAll(".card")
+.forEach(card=>{
+
+card.style.display =
+card.innerText
+.toLowerCase()
+.includes(value)
+? "block"
+: "none";
+
 });
+
+});
+
+function filterWine(term){
+
+document
+.querySelectorAll(".card")
+.forEach(card=>{
+
+card.style.display =
+card.innerText.includes(term)
+|| term === ""
+? "block"
+: "none";
+
+});
+
+}
+
 </script>
 
 </body>
