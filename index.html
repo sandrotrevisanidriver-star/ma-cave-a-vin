@@ -13,6 +13,10 @@
 
 <input type="text" class="search" id="search" placeholder="Rechercher un vin...">
 
+<select id="caveSelect" onchange="applyFilters()">
+<option value="">🏠 Toutes les caves</option>
+</select>
+
 <div class="actions">
 <button onclick="suggestTonight()">🤖 Que boire ce soir ?</button>
 </div>
@@ -28,7 +32,7 @@
 </select>
 
 <div class="actionBox" id="suggestionBox">
-Choisis un repas ou demande une suggestion pour ce soir 🍷
+Choisis une cave, un repas ou demande une suggestion 🍷
 </div>
 
 <div class="filters">
