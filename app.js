@@ -88,6 +88,18 @@ if(repas === "dessert" && texte.includes("champagne")) score += 1;
 return score;
 }
 
+function afficherSuggestion(vin, prefixe){
+document.getElementById("suggestionBox").innerHTML = `
+${prefixe} <b>${vin["Vin"]}</b><br>
+${vin["Millésime"] || ""} • ${vin["Couleur/Type"] || ""} • ${vin["Région/Pays"] || ""}<br>
+${garde(vin)}<br>
+${accords(vin)}<br><br>
+<button onclick='openModal(allWines[${allWines.indexOf(vin)}])'>
+Voir la fiche complète
+</button>
+`;
+}
+
 function suggestMeal(){
 const repas = document.getElementById("mealSelect").value;
 if(!repas) return;
@@ -98,9 +110,12 @@ const choix = allWines
 .filter(x => x.score > 0)
 .sort((a,b) => b.score - a.score)[0];
 
-document.getElementById("suggestionBox").innerHTML = choix
-? `🍽️ Suggestion : <b>${choix.vin["Vin"]}</b><br>${choix.vin["Millésime"] || ""} • ${choix.vin["Région/Pays"] || ""}<br>${accords(choix.vin)}`
-: "Aucun accord évident trouvé dans la cave.";
+if(choix){
+afficherSuggestion(choix.vin, "🍽️ Suggestion :");
+} else {
+document.getElementById("suggestionBox").innerHTML =
+"Aucun accord évident trouvé dans la cave.";
+}
 }
 
 function suggestTonight(){
@@ -111,11 +126,7 @@ const priorite = dispo.filter(v => garde(v).includes("🔔"));
 const liste = priorite.length ? priorite : dispo;
 const vin = liste[Math.floor(Math.random() * liste.length)];
 
-document.getElementById("suggestionBox").innerHTML =
-`🤖 Ce soir, je proposerais : <b>${vin["Vin"]}</b><br>
-${vin["Millésime"] || ""} • ${vin["Couleur/Type"] || ""} • ${vin["Région/Pays"] || ""}<br>
-${garde(vin)}<br>
-${accords(vin)}`;
+afficherSuggestion(vin, "🤖 Ce soir, je proposerais :");
 }
 
 function openModal(vin){
