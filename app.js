@@ -178,6 +178,37 @@ function closeModal(){
 document.getElementById("wineModal").style.display = "none";
 }
 
+function updateStats(wines){
+let total = 0;
+let rouges = 0;
+let blancs = 0;
+let champagnes = 0;
+let mousseux = 0;
+let liquoreux = 0;
+
+wines.forEach(vin=>{
+const qte = Number(vin["Quantité"] || 0);
+const type = (vin["Couleur/Type"] || "").toLowerCase();
+
+total += qte;
+
+if(type.includes("rouge")) rouges += qte;
+if(type.includes("blanc")) blancs += qte;
+if(type.includes("champagne")) champagnes += qte;
+if(type.includes("mousseux") || type.includes("pétillant") || type.includes("petillant")) mousseux += qte;
+if(type.includes("liquoreux") || type.includes("moelleux") || type.includes("doux")) liquoreux += qte;
+});
+
+document.getElementById("statsBox").innerHTML = `
+🍾 Total : ${total} bouteilles<br>
+🍷 Rouges : ${rouges}<br>
+🥂 Blancs : ${blancs}<br>
+🍾 Champagnes : ${champagnes}<br>
+✨ Mousseux : ${mousseux}<br>
+🍯 Liquoreux : ${liquoreux}
+`;
+}
+
 async function loadWines(){
 const response = await fetch(url);
 const data = await response.json();
