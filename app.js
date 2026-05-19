@@ -1,5 +1,7 @@
 const sheetID = "1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94";
-const url = `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
+function getSheetUrl(){
+return `https://opensheet.elk.sh/${sheetID}/Feuille%201?t=${Date.now()}`;
+}
 
 const stockUrl = "https://script.google.com/macros/s/AKfycbweDQoeUCJ6nwF-zasiRK3iDD77IhOM0Voi45TcghmWhHvkihOfW3FVRkJvCOwf3_91/exec";
 
@@ -210,7 +212,7 @@ document.getElementById("wineModal").style.display = "none";
 }
 
 async function loadWines(){
-const response = await fetch(url);
+const response = await fetch(getSheetUrl(), { cache: "no-store" });
 const data = await response.json();
 allWines = data;
 
