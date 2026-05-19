@@ -213,6 +213,7 @@ async function loadWines(){
 const response = await fetch(url);
 const data = await response.json();
 allWines = data;
+updateStats(allWines);
 
 buildCaveSelect();
 renderWines(allWines);
@@ -273,6 +274,7 @@ return matchCave && matchSearch;
 });
 
 renderWines(filtered);
+updateStats(filtered);
 }
 function sortirBouteille(nomVin){
 if(confirm(
