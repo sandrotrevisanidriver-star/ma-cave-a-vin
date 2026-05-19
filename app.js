@@ -4,6 +4,10 @@ function getSheetUrl(){
   return `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 }
 
+function getHistoryUrl(){
+  return `https://opensheet.elk.sh/${sheetID}/Historique`;
+}
+
 const stockUrl = "https://script.google.com/macros/s/AKfycbweDQoeUCJ6nwF-zasiRK3iDD77IhOM0Voi45TcghmWhHvkihOfW3FVRkJvCOwf3_91/exec";
 
 let allWines = [];
@@ -19,19 +23,16 @@ function texteVin(vin){
 
 function accords(vin){
   const texte = texteVin(vin);
-
   if(texte.includes("champagne")) return "🥂 Apéritif, fruits de mer, saumon fumé, sushi, volaille fine.";
   if(texte.includes("blanc")) return "🐟 Poisson, fondue, raclette, fromage frais, volaille, apéritif.";
   if(texte.includes("rouge") && texte.includes("bordeaux")) return "🥩 Viande rouge, entrecôte, agneau, gibier, fromages affinés.";
   if(texte.includes("rouge") && texte.includes("italie")) return "🍝 Pâtes, pizza, viande mijotée, charcuterie, parmesan.";
   if(texte.includes("rouge")) return "🍖 Viande rouge, grillades, plats mijotés, fromage.";
-
   return "🍽️ Accord polyvalent : apéritif, fromage, plat convivial.";
 }
 
 function cepages(vin){
   const texte = texteVin(vin);
-
   if(texte.includes("bordeaux")) return "Cabernet Sauvignon, Merlot";
   if(texte.includes("champagne")) return "Pinot Noir, Chardonnay, Meunier";
   if(texte.includes("bourgogne")) return "Pinot Noir ou Chardonnay";
@@ -44,57 +45,39 @@ function cepages(vin){
   if(texte.includes("chianti")) return "Sangiovese";
   if(texte.includes("blanc")) return "Assemblage de cépages blancs";
   if(texte.includes("rouge")) return "Assemblage de cépages rouges";
-
   return "Cépages à déterminer";
 }
 
 function garde(vin){
   const annee = parseInt(vin["Millésime"]);
   const texte = texteVin(vin);
-
   if(!annee) return "ℹ️ Garde non calculée.";
 
   const age = new Date().getFullYear() - annee;
 
-  if(texte.includes("champagne")){
-    if(age >= 10) return "🔔 À boire bientôt.";
-    return "✅ Encore quelques années possibles.";
-  }
-
-  if(texte.includes("blanc")){
-    if(age >= 6) return "🔔 À boire maintenant.";
-    return "✅ Encore frais.";
-  }
-
+  if(texte.includes("champagne")) return age >= 10 ? "🔔 À boire bientôt." : "✅ Encore quelques années possibles.";
+  if(texte.includes("blanc")) return age >= 6 ? "🔔 À boire maintenant." : "✅ Encore frais.";
   if(texte.includes("bordeaux") || texte.includes("barolo") || texte.includes("grand cru")){
     if(age >= 12) return "🔔 Très belle fenêtre de dégustation.";
     if(age >= 6) return "✅ Peut commencer à être ouvert.";
     return "⏳ Peut encore attendre.";
   }
-
   if(texte.includes("rouge")){
     if(age >= 8) return "🔔 À boire bientôt.";
     if(age >= 4) return "✅ Bon moment pour ouvrir.";
     return "⏳ Encore jeune.";
   }
-
   return "ℹ️ À vérifier selon le vin.";
 }
 
 function updateStats(wines){
-  let total = 0;
-  let rouges = 0;
-  let blancs = 0;
-  let champagnes = 0;
-  let mousseux = 0;
-  let liquoreux = 0;
+  let total = 0, rouges = 0, blancs = 0, champagnes = 0, mousseux = 0, liquoreux = 0;
 
   wines.forEach(vin=>{
     const qte = Math.max(0, Number(vin["Quantité"] || 0));
     const type = (vin["Couleur/Type"] || "").toLowerCase();
 
     total += qte;
-
     if(type.includes("rouge")) rouges += qte;
     if(type.includes("blanc")) blancs += qte;
     if(type.includes("champagne")) champagnes += qte;
@@ -110,6 +93,34 @@ function updateStats(wines){
     ✨ Mousseux : ${mousseux}<br>
     🍯 Liquoreux : ${liquoreux}
   `;
+}
+
+async function loadHistory(){
+  try{
+    const response = await fetch(getHistoryUrl(), { cache: "no-store" });
+    const data = await response.json();
+    const derniers = data.slice(-5).reverse();
+
+    document.getElementById("historyBox").innerHTML = `
+      <h3>📜 Derniers mouvements</h3>
+      ${
+        derniers.length
+        ? derniers.map(item => `
+          <div>
+            ${item["Date"] || ""}<br>
+            <b>${item["Action"] || ""}</b> — ${item["Vin"] || ""}<br>
+            ${item["Emplacement source"] || ""}
+            ${item["Emplacement destination"] ? " → " + item["Emplacement destination"] : ""}
+          </div><hr>
+        `).join("")
+        : "Aucun mouvement pour l’instant."
+      }
+    `;
+  }
+  catch(error){
+    document.getElementById("historyBox").innerHTML =
+      "Historique indisponible pour le moment.";
+  }
 }
 
 function scoreRepas(vin, repas){
@@ -230,6 +241,7 @@ async function loadWines(){
   updateStats(allWines);
   buildCaveSelect();
   renderWines(allWines);
+  loadHistory();
 }
 
 function buildCaveSelect(){
@@ -310,11 +322,9 @@ function gererBouteille(nomVin, emplacement){
   if(choix === "1"){
     action = "consume";
   }
-
   else if(choix === "2"){
     action = "gift";
   }
-
   else if(choix === "3"){
     const choixCave = prompt(
       "Déplacer vers quelle cave ?\n\n" +
@@ -325,15 +335,9 @@ function gererBouteille(nomVin, emplacement){
 
     if(!choixCave) return;
 
-    if(choixCave === "1"){
-      destination = "Frigo buanderie";
-    }
-    else if(choixCave === "2"){
-      destination = "Cave buanderie";
-    }
-    else if(choixCave === "3"){
-      destination = "Cave à voûte";
-    }
+    if(choixCave === "1") destination = "Frigo buanderie";
+    else if(choixCave === "2") destination = "Cave buanderie";
+    else if(choixCave === "3") destination = "Cave à voûte";
     else{
       alert("Choix invalide.");
       return;
@@ -341,7 +345,6 @@ function gererBouteille(nomVin, emplacement){
 
     action = "move";
   }
-
   else{
     alert("Choix invalide.");
     return;
@@ -372,7 +375,11 @@ function gererBouteille(nomVin, emplacement){
 
     setTimeout(()=>{
       loadWines();
-    },2000);
+    },3000);
+
+    setTimeout(()=>{
+      loadWines();
+    },7000);
   }
 }
 
