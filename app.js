@@ -258,7 +258,13 @@ function openModal(vin){
       🍾 Contenance : ${vin["Contenance"] || ""}<br>
       🌍 Région/Pays : ${vin["Région/Pays"] || ""}<br>
       📍 Emplacement : ${vin["Emplacement"] || ""}<br>
-      ⭐ Particularités : ${vin["Particularités"] || ""}
+      ⭐ Particularités : ${vin["Particularités"] || ""}<br>
+      💰 Prix estimé : ${vin["Prix estimé"] || ""} CHF<br>
+      💵 Valeur ligne : ${vin["Valeur ligne"] || ""} CHF<br>
+      🎁 Offert par : ${vin["Offert par"] || ""}<br>
+      🎉 Occasion : ${vin["Occasion"] || ""}<br>
+      📥 Date d’entrée : ${vin["Date d’entrée"] || ""}<br>
+      📝 Notes perso : ${vin["Notes perso"] || ""}
     </div>
 
     <h3>🔔 Alerte de garde</h3>
