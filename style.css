@@ -138,3 +138,14 @@ border-radius:20px;
 text-decoration:none;
 margin-top:15px;
 }
+
+.stats{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+color:#444;
+line-height:1.6;
+font-weight:bold;
+}
