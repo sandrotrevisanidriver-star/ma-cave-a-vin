@@ -1,1 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajouter une bouteille</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<h1>➕ Ajouter une bouteille</h1>
+
+<div class="actionBox">
+
+<h3>Mode d’ajout</h3>
+
+<select id="modeAjout">
+<option value="manuel">✍️ Ajout manuel</option>
+<option value="photo">📸 Ajout avec photo</option>
+</select>
+
+</div>
+
+<div class="actionBox" id="photoSection" style="display:none;">
+
+<h3>📸 Photos</h3>
+
+<label>Étiquette avant</label>
+<input type="file" accept="image/*" capture="environment">
+
+<label>Contre-étiquette (optionnel)</label>
+<input type="file" accept="image/*" capture="environment">
+
+<p>
+Tu peux ensuite utiliser l’OCR iPhone pour copier/coller les infos 🍷
+</p>
+
+</div>
+
+<div class="actionBox formBox">
+
+<h3>Informations bouteille</h3>
+
+<label>
+Vin <span class="required">*</span>
+</label>
+<input id="vin" placeholder="Nom du vin">
+
+<label>
+Millésime <span class="required">*</span>
+</label>
+<input id="millesime" type="number" placeholder="2020">
+
+<label>
+Couleur / Type <span class="required">*</span>
+</label>
+<select id="type">
+<option value="">Choisir</option>
+<option>Rouge</option>
+<option>Blanc</option>
+<option>Rosé</option>
+<option>Champagne</option>
+<option>Mousseux</option>
+<option>Liquoreux</option>
+<option>Orange</option>
+<option>Autre</option>
+</select>
+
+<label>
+Région / Pays
+</label>
+<input id="region" placeholder="Valais, Bordeaux, Toscane...">
+
+<label>
+Contenance <span class="required">*</span>
+</label>
+<select id="contenance">
+<option value="">Choisir</option>
+<option>75 cl</option>
+<option>37.5 cl</option>
+<option>50 cl</option>
+<option>150 cl Magnum</option>
+<option>300 cl Jéroboam</option>
+<option>Autre</option>
+</select>
+
+<label>
+Quantité <span class="required">*</span>
+</label>
+<input id="quantite" type="number" value="1">
+
+<label>
+Emplacement <span class="required">*</span>
+</label>
+<select id="emplacement">
+<option value="">Choisir</option>
+<option>Frigo buanderie</option>
+<option>Cave buanderie</option>
+<option>Cave à voûte</option>
+</select>
+
+<label>
+Particularités
+</label>
+<input id="particularites" placeholder="Grand Cru, Bio, Rare...">
+
+<label>
+🎁 Offert par
+</label>
+<input id="offertPar" placeholder="Nom de la personne">
+
+<label>
+💰 Prix estimé
+</label>
+<input id="prix" type="number" placeholder="CHF">
+
+<label>
+📝 Notes perso
+</label>
+<input id="notes" placeholder="Commentaires personnels">
+
+<button onclick="ajouterBouteille()">
+🍷 Ajouter à la cave
+</button>
+
+<a href="index.html" class="addButton">
+⬅ Retour à la cave
+</a>
+
+</div>
+
+<script>
+document.getElementById("modeAjout").addEventListener("change", function(){
+
+document.getElementById("photoSection").style.display =
+this.value === "photo"
+? "block"
+: "none";
+
+});
+</script>
+
+<script src="add.js"></script>
+
+</body>
+</html>
