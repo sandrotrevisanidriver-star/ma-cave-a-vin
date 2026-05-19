@@ -302,12 +302,28 @@ action = "gift";
 }
 
 else if(choix === "3"){
-destination = prompt(
+const choixCave = prompt(
 "Déplacer vers quelle cave ?\n\n" +
-"Frigo buanderie\n" +
-"Cave buanderie\n" +
-"Cave à voûte"
+"1 = Frigo buanderie\n" +
+"2 = Cave buanderie\n" +
+"3 = Cave à voûte"
 );
+
+if(!choixCave) return;
+
+if(choixCave === "1"){
+destination = "Frigo buanderie";
+}
+else if(choixCave === "2"){
+destination = "Cave buanderie";
+}
+else if(choixCave === "3"){
+destination = "Cave à voûte";
+}
+else{
+alert("Choix invalide.");
+return;
+}
 
 if(!destination) return;
 action = "move";
