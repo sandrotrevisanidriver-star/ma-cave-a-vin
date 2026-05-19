@@ -485,3 +485,41 @@ document.getElementById("suggestionBox").innerHTML =
 "Choisis une cave, un repas ou demande une suggestion 🍷";
 
 }
+
+const PASSWORD = "Vin2026%";
+
+function checkPassword(){
+
+const input =
+document.getElementById("passwordInput").value;
+
+if(input === PASSWORD){
+
+localStorage.setItem("wineAuth", "ok");
+
+document.getElementById("loginScreen").style.display =
+"none";
+
+}
+else{
+
+alert("Mot de passe incorrect 🍷");
+
+}
+
+}
+
+window.addEventListener("load", ()=>{
+
+if(localStorage.getItem("wineAuth") === "ok"){
+
+const login =
+document.getElementById("loginScreen");
+
+if(login){
+login.style.display = "none";
+}
+
+}
+
+});
