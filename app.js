@@ -1,7 +1,7 @@
 const sheetID = "1-FZVnDsaP6YKZy6R3b4dj5-4BzmefEccusgPYvRuy94";
 
 function getSheetUrl(){
-  return `https://opensheet.elk.sh/${sheetID}/Feuille%201?t=${Date.now()}`;
+  return `https://opensheet.elk.sh/${sheetID}/Feuille%201`;
 }
 
 const stockUrl = "https://script.google.com/macros/s/AKfycbweDQoeUCJ6nwF-zasiRK3iDD77IhOM0Voi45TcghmWhHvkihOfW3FVRkJvCOwf3_91/exec";
