@@ -9,6 +9,47 @@
 
 <body>
 
+<div id="loginScreen" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#1e1e1e;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:9999;
+padding:20px;
+box-sizing:border-box;
+">
+
+<h2 style="color:white;">
+🍷 Accès cave à vin
+</h2>
+
+<input
+type="password"
+id="passwordInput"
+placeholder="Mot de passe"
+style="
+padding:12px;
+border-radius:10px;
+border:none;
+width:100%;
+max-width:300px;
+margin-bottom:15px;
+font-size:18px;
+"
+>
+
+<button onclick="checkPassword()">
+Entrer
+</button>
+
+</div>
+  
 <h1>🍷 Ma Cave à Vin</h1>
   
 <a href="add.html" class="addButton">➕ Ajouter une bouteille</a>
