@@ -156,8 +156,8 @@ document.getElementById("modalContent").innerHTML = `
 📸 Chercher une photo
 </a>
 
-<button class="close gold" onclick='sortirBouteille(${JSON.stringify(vin["Vin"] || "")})'>
-🍾 Sortir 1 bouteille du stock
+<button class="close gold" onclick='gererBouteille(${JSON.stringify(vin["Vin"] || "")}, ${JSON.stringify(vin["Emplacement"] || "")})'>
+📦 Gérer cette bouteille
 </button>
 
 <a class="photoLink"
@@ -276,7 +276,78 @@ return matchCave && matchSearch;
 renderWines(filtered);
 updateStats(filtered);
 }
-function sortirBouteille(nomVin){
+function gererBouteille(nomVin, emplacement){
+
+const choix = prompt(
+"Que veux-tu faire avec cette bouteille ?\n\n" +
+"1 = Consommée 🍷\n" +
+"2 = Offerte 🎁\n" +
+"3 = Déplacer 🔄\n\n" +
+nomVin
+);
+
+if(!choix) return;
+
+let action = "";
+let destination = "";
+
+if(choix === "1"){
+action = "consume";
+}
+
+else if(choix === "2"){
+action = "gift";
+}
+
+else if(choix === "3"){
+destination = prompt(
+"Déplacer vers quelle cave ?\n\n" +
+"Frigo buanderie\n" +
+"Cave buanderie\n" +
+"Cave à voûte"
+);
+
+if(!destination) return;
+action = "move";
+}
+
+else{
+alert("Choix invalide.");
+return;
+}
+
+if(confirm(
+"🍷 Gestion bouteille\n\n" +
+"Vin : " + nomVin + "\n" +
+"Emplacement actuel : " + emplacement + "\n" +
+(action === "move" ? "Nouvel emplacement : " + destination + "\n" : "") +
+"\nConfirmer l'action ?"
+)){
+
+fetch(stockUrl, {
+method: "POST",
+mode: "no-cors",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
+},
+body:
+"vin=" + encodeURIComponent(nomVin) +
+"&emplacement=" + encodeURIComponent(emplacement) +
+"&action=" + encodeURIComponent(action) +
+"&destination=" + encodeURIComponent(destination)
+});
+
+alert("Modification enregistrée 🍷");
+
+closeModal();
+
+setTimeout(()=>{
+location.reload();
+},1500);
+
+}
+
+}
 if(confirm(
 "⚠️ Confirmation\n\n" +
 "Es-tu sûr de vouloir sortir cette bouteille ?\n\n" +
