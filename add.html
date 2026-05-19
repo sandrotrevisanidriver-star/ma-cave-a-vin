@@ -3,8 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Ajouter une bouteille</title>
+
 <link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
+
 </head>
 
 <body>
@@ -24,17 +29,27 @@
 
 <div class="actionBox" id="photoSection" style="display:none;">
 
-<h3>📸 Photos</h3>
+<h3>📸 Photos bouteille</h3>
 
 <label>Étiquette avant</label>
-<input type="file" accept="image/*" capture="environment">
+<input type="file" id="photoAvant" accept="image/*" capture="environment">
+
+<img id="previewAvant" style="width:100%;border-radius:12px;margin-top:10px;display:none;">
+
+<br><br>
 
 <label>Contre-étiquette (optionnel)</label>
-<input type="file" accept="image/*" capture="environment">
+<input type="file" id="photoArriere" accept="image/*" capture="environment">
 
-<p>
-Tu peux ensuite utiliser l’OCR iPhone pour copier/coller les infos 🍷
-</p>
+<img id="previewArriere" style="width:100%;border-radius:12px;margin-top:10px;display:none;">
+
+<br><br>
+
+<button onclick="lireOCR()">
+🔍 Lecture OCR / Remplir le formulaire
+</button>
+
+<div id="ocrStatus" style="margin-top:10px;"></div>
 
 </div>
 
@@ -55,6 +70,7 @@ Millésime <span class="required">*</span>
 <label>
 Couleur / Type <span class="required">*</span>
 </label>
+
 <select id="type">
 <option value="">Choisir</option>
 <option>Rouge</option>
@@ -75,6 +91,7 @@ Région / Pays
 <label>
 Contenance <span class="required">*</span>
 </label>
+
 <select id="contenance">
 <option value="">Choisir</option>
 <option>75 cl</option>
@@ -93,6 +110,7 @@ Quantité <span class="required">*</span>
 <label>
 Emplacement <span class="required">*</span>
 </label>
+
 <select id="emplacement">
 <option value="">Choisir</option>
 <option>Frigo buanderie</option>
@@ -129,17 +147,6 @@ Particularités
 </a>
 
 </div>
-
-<script>
-document.getElementById("modeAjout").addEventListener("change", function(){
-
-document.getElementById("photoSection").style.display =
-this.value === "photo"
-? "block"
-: "none";
-
-});
-</script>
 
 <script src="add.js"></script>
 
