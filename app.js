@@ -468,3 +468,20 @@ document.getElementById("wineModal").addEventListener("click", function(e){
 });
 
 loadWines();
+
+function resetFilters(){
+
+document.getElementById("search").value = "";
+
+document.getElementById("caveSelect").value = "";
+
+document.getElementById("mealSelect").value = "";
+
+renderWines(allWines);
+
+updateStats(allWines);
+
+document.getElementById("suggestionBox").innerHTML =
+"Choisis une cave, un repas ou demande une suggestion 🍷";
+
+}
