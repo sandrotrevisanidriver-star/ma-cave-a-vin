@@ -71,63 +71,101 @@ function garde(vin){
 }
 
 function updateStats(wines){
-  let total = 0, rouges = 0, blancs = 0, champagnes = 0, mousseux = 0, liquoreux = 0;
 
-  wines.forEach(vin=>{
-    const qte = Math.max(0, Number(vin["Quantité"] || 0));
-    const type = (vin["Couleur/Type"] || "").toLowerCase();
+let total = 0;
 
-    total += qte;
-    if(type.includes("rouge")) rouges += qte;
-    if(type.includes("blanc")) blancs += qte;
-    if(type.includes("champagne")) champagnes += qte;
-    if(type.includes("mousseux") || type.includes("pétillant") || type.includes("petillant")) mousseux += qte;
-    if(type.includes("liquoreux") || type.includes("moelleux") || type.includes("doux")) liquoreux += qte;
-  });
+let rouges = 0;
+let blancs = 0;
+let champagnes = 0;
+let mousseux = 0;
+let liquoreux = 0;
 
-  document.getElementById("statsBox").innerHTML = `
-    🍾 Total : ${total} bouteilles<br>
-    🍷 Rouges : ${rouges}<br>
-    🥂 Blancs : ${blancs}<br>
-    🍾 Champagnes : ${champagnes}<br>
-    ✨ Mousseux : ${mousseux}<br>
-    🍯 Liquoreux : ${liquoreux}
-  `;
+let valeurTotale = 0;
+
+let valeurCaveVoute = 0;
+let valeurCaveBuanderie = 0;
+let valeurFrigo = 0;
+
+wines.forEach(vin=>{
+
+const qte = Number(vin["Quantité"] || 0);
+
+const type = (vin["Couleur/Type"] || "").toLowerCase();
+
+const prix = Number(vin["Prix estimé"] || 0);
+
+const emplacement =
+(vin["Emplacement"] || "").toLowerCase();
+
+total += qte;
+
+valeurTotale += prix * qte;
+
+if(type.includes("rouge")) rouges += qte;
+
+if(type.includes("blanc")) blancs += qte;
+
+if(type.includes("champagne")) champagnes += qte;
+
+if(
+type.includes("mousseux") ||
+type.includes("pétillant") ||
+type.includes("petillant")
+){
+mousseux += qte;
 }
 
-let fullHistory = [];
-
-async function loadHistory(){
-  try{
-    const response = await fetch(getHistoryUrl(), { cache: "no-store" });
-    const data = await response.json();
-
-    fullHistory = data.slice().reverse();
-    const derniers = fullHistory.slice(0, 3);
-
-    document.getElementById("historyBox").innerHTML = `
-      <h3>📜 Derniers mouvements</h3>
-      ${
-        derniers.length
-        ? derniers.map(item => `
-          <div>
-            ${item["Date"] || ""}<br>
-            <b>${item["Action"] || ""}</b> — ${item["Vin"] || ""}<br>
-            ${item["Emplacement source"] || ""}
-            ${item["Emplacement destination"] ? " → " + item["Emplacement destination"] : ""}
-          </div><hr>
-        `).join("")
-        : "Aucun mouvement pour l’instant."
-      }
-      <button onclick="openHistoryModal()">Voir tout l’historique</button>
-    `;
-  }
-  catch(error){
-    document.getElementById("historyBox").innerHTML =
-      "Historique indisponible pour le moment.";
-  }
+if(
+type.includes("liquoreux") ||
+type.includes("moelleux") ||
+type.includes("doux")
+){
+liquoreux += qte;
 }
 
+if(emplacement.includes("voûte")){
+valeurCaveVoute += prix * qte;
+}
+
+if(emplacement.includes("cave buanderie")){
+valeurCaveBuanderie += prix * qte;
+}
+
+if(emplacement.includes("frigo")){
+valeurFrigo += prix * qte;
+}
+
+});
+
+const prixMoyen =
+total > 0
+? (valeurTotale / total).toFixed(2)
+: 0;
+
+document.getElementById("statsBox").innerHTML = `
+
+🍾 Total : ${total} bouteilles<br>
+
+🍷 Rouges : ${rouges}<br>
+🥂 Blancs : ${blancs}<br>
+🍾 Champagnes : ${champagnes}<br>
+✨ Mousseux : ${mousseux}<br>
+🍯 Liquoreux : ${liquoreux}<br><br>
+
+💰 Valeur totale : ${valeurTotale.toFixed(2)} CHF<br>
+
+🏠 Cave à voûte : ${valeurCaveVoute.toFixed(2)} CHF<br>
+
+🏠 Cave buanderie : ${valeurCaveBuanderie.toFixed(2)} CHF<br>
+
+🏠 Frigo buanderie : ${valeurFrigo.toFixed(2)} CHF<br><br>
+
+📊 Prix moyen bouteille :
+${prixMoyen} CHF
+
+`;
+
+}
 function openHistoryModal(){
   document.getElementById("modalContent").innerHTML = `
     <h2>📜 Historique complet</h2>
