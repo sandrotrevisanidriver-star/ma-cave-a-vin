@@ -59,73 +59,118 @@ function remplirFormulaireDepuisTexte(texte){
 
   const texteMin = texte.toLowerCase();
 
+  // Millésime
   const annee = texte.match(/\b(19[5-9][0-9]|20[0-3][0-9])\b/);
   if(annee){
     document.getElementById("millesime").value = annee[0];
   }
 
+  // Type
   if(texteMin.includes("champagne")){
     document.getElementById("type").value = "Champagne";
+  }
+  else if(texteMin.includes("mousseux") || texteMin.includes("prosecco") || texteMin.includes("spumante")){
+    document.getElementById("type").value = "Mousseux";
   }
   else if(texteMin.includes("rosé") || texteMin.includes("rose")){
     document.getElementById("type").value = "Rosé";
   }
-  else if(texteMin.includes("blanc")){
-    document.getElementById("type").value = "Blanc";
-  }
-  else if(texteMin.includes("rouge")){
+  else if(
+    texteMin.includes("rouge") ||
+    texteMin.includes("rouges") ||
+    texteMin.includes("cépages rouges") ||
+    texteMin.includes("cepages rouges")
+  ){
     document.getElementById("type").value = "Rouge";
   }
-  else if(texteMin.includes("mousseux") || texteMin.includes("prosecco") || texteMin.includes("spumante")){
-    document.getElementById("type").value = "Mousseux";
+  else if(texteMin.includes("blanc")){
+    document.getElementById("type").value = "Blanc";
   }
   else if(texteMin.includes("liquoreux") || texteMin.includes("moelleux")){
     document.getElementById("type").value = "Liquoreux";
   }
 
-  if(texteMin.includes("75 cl") || texteMin.includes("750 ml") || texteMin.includes("0.75")){
+  // Contenance
+  if(
+    texteMin.includes("75 cl") ||
+    texteMin.includes("75cl") ||
+    texteMin.includes("750 ml") ||
+    texteMin.includes("750ml") ||
+    texteMin.includes("0.75")
+  ){
     document.getElementById("contenance").value = "75 cl";
   }
-  else if(texteMin.includes("37.5") || texteMin.includes("375 ml")){
+  else if(texteMin.includes("37.5") || texteMin.includes("375 ml") || texteMin.includes("375ml")){
     document.getElementById("contenance").value = "37.5 cl";
   }
   else if(texteMin.includes("150 cl") || texteMin.includes("magnum")){
     document.getElementById("contenance").value = "150 cl Magnum";
   }
 
-  const regions = [
-    "Valais","Bordeaux","Bourgogne","Champagne","Toscane","Piémont",
-    "Rioja","Ribera del Duero","Alsace","Loire","Vénétie","Suisse",
-    "France","Italie","Espagne"
-  ];
+  // Région / Pays
+  if(texteMin.includes("suisse")){
+    document.getElementById("region").value = "Suisse";
+  }
+  else if(texteMin.includes("valais")){
+    document.getElementById("region").value = "Valais, Suisse";
+  }
+  else if(texteMin.includes("bordeaux")){
+    document.getElementById("region").value = "Bordeaux, France";
+  }
+  else if(texteMin.includes("bourgogne")){
+    document.getElementById("region").value = "Bourgogne, France";
+  }
+  else if(texteMin.includes("toscane")){
+    document.getElementById("region").value = "Toscane, Italie";
+  }
+  else if(texteMin.includes("piémont") || texteMin.includes("piemont")){
+    document.getElementById("region").value = "Piémont, Italie";
+  }
 
-  for(const region of regions){
-    if(texteMin.includes(region.toLowerCase())){
-      document.getElementById("region").value = region;
-      break;
+  // Nom du vin - règles propres
+  let nomDetecte = "";
+
+  if(texteMin.includes("vignefol")){
+    nomDetecte = "Vignefol";
+  }
+
+  if(!nomDetecte){
+    const lignesPropres = lignes.filter(l => {
+      const low = l.toLowerCase();
+
+      if(/\b(19[5-9][0-9]|20[0-3][0-9])\b/.test(l)) return false;
+      if(/[<>¥;]/.test(l)) return false;
+      if(low.includes("alcool")) return false;
+      if(low.includes("contient")) return false;
+      if(low.includes("mis en bouteille")) return false;
+      if(low.includes("suisse")) return false;
+      if(low.includes("vin de pays")) return false;
+      if(low.includes("75")) return false;
+      if(low.includes("vol")) return false;
+      if(low.includes("www")) return false;
+      if(low.includes("barcode")) return false;
+      if(l.length > 35) return false;
+
+      return true;
+    });
+
+    if(lignesPropres.length){
+      nomDetecte = lignesPropres[0];
     }
   }
 
-  if(!document.getElementById("vin").value && lignes.length){
-    const ligneProbable = lignes.find(l =>
-      !/\b(19[5-9][0-9]|20[0-3][0-9])\b/.test(l) &&
-      !l.toLowerCase().includes("alcool") &&
-      !l.toLowerCase().includes("contient") &&
-      !l.toLowerCase().includes("mis en bouteille") &&
-      l.length < 45
-    );
-
-    if(ligneProbable){
-      document.getElementById("vin").value = ligneProbable;
-    }
+  if(nomDetecte){
+    document.getElementById("vin").value = nomDetecte;
   }
 
-  document.getElementById("particularites").value =
-    (document.getElementById("particularites").value + " " + texte)
-    .trim()
+  // Particularités : texte OCR nettoyé
+  const texteNettoye = lignes
+    .filter(l => !/[<>¥]/.test(l))
+    .join(" | ")
     .slice(0, 500);
-}
 
+  document.getElementById("particularites").value = texteNettoye;
+}
 function ajouterBouteille(){
   const vin = document.getElementById("vin").value.trim();
   const millesime = document.getElementById("millesime").value.trim();
