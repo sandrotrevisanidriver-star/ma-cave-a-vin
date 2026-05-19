@@ -69,6 +69,37 @@ return "⏳ Encore jeune.";
 return "ℹ️ À vérifier selon le vin.";
 }
 
+function updateStats(wines){
+let total = 0;
+let rouges = 0;
+let blancs = 0;
+let champagnes = 0;
+let mousseux = 0;
+let liquoreux = 0;
+
+wines.forEach(vin=>{
+const qte = Number(vin["Quantité"] || 0);
+const type = (vin["Couleur/Type"] || "").toLowerCase();
+
+total += qte;
+
+if(type.includes("rouge")) rouges += qte;
+if(type.includes("blanc")) blancs += qte;
+if(type.includes("champagne")) champagnes += qte;
+if(type.includes("mousseux") || type.includes("pétillant") || type.includes("petillant")) mousseux += qte;
+if(type.includes("liquoreux") || type.includes("moelleux") || type.includes("doux")) liquoreux += qte;
+});
+
+document.getElementById("statsBox").innerHTML = `
+🍾 Total : ${total} bouteilles<br>
+🍷 Rouges : ${rouges}<br>
+🥂 Blancs : ${blancs}<br>
+🍾 Champagnes : ${champagnes}<br>
+✨ Mousseux : ${mousseux}<br>
+🍯 Liquoreux : ${liquoreux}
+`;
+}
+
 function scoreRepas(vin, repas){
 const texte = texteVin(vin);
 let score = 0;
@@ -160,7 +191,7 @@ document.getElementById("modalContent").innerHTML = `
 📦 Gérer cette bouteille
 </button>
 
-<a class="photoLink"
+<a class="photoLink chatLink"
 href="https://chat.openai.com/?q=${encodeURIComponent('Donne-moi des informations détaillées sur le vin ' + vin['Vin'] + ' ' + vin['Millésime'])}"
 target="_blank">
 🤖 Demander plus d'infos à ChatGPT
@@ -178,49 +209,19 @@ function closeModal(){
 document.getElementById("wineModal").style.display = "none";
 }
 
-function updateStats(wines){
-let total = 0;
-let rouges = 0;
-let blancs = 0;
-let champagnes = 0;
-let mousseux = 0;
-let liquoreux = 0;
-
-wines.forEach(vin=>{
-const qte = Number(vin["Quantité"] || 0);
-const type = (vin["Couleur/Type"] || "").toLowerCase();
-
-total += qte;
-
-if(type.includes("rouge")) rouges += qte;
-if(type.includes("blanc")) blancs += qte;
-if(type.includes("champagne")) champagnes += qte;
-if(type.includes("mousseux") || type.includes("pétillant") || type.includes("petillant")) mousseux += qte;
-if(type.includes("liquoreux") || type.includes("moelleux") || type.includes("doux")) liquoreux += qte;
-});
-
-document.getElementById("statsBox").innerHTML = `
-🍾 Total : ${total} bouteilles<br>
-🍷 Rouges : ${rouges}<br>
-🥂 Blancs : ${blancs}<br>
-🍾 Champagnes : ${champagnes}<br>
-✨ Mousseux : ${mousseux}<br>
-🍯 Liquoreux : ${liquoreux}
-`;
-}
-
 async function loadWines(){
 const response = await fetch(url);
 const data = await response.json();
 allWines = data;
-updateStats(allWines);
 
+updateStats(allWines);
 buildCaveSelect();
 renderWines(allWines);
 }
 
 function buildCaveSelect(){
 const caveSelect = document.getElementById("caveSelect");
+caveSelect.innerHTML = `<option value="">🏠 Toutes les caves</option>`;
 
 const caves = [...new Set(
 allWines
@@ -276,6 +277,7 @@ return matchCave && matchSearch;
 renderWines(filtered);
 updateStats(filtered);
 }
+
 function gererBouteille(nomVin, emplacement){
 
 const choix = prompt(
@@ -338,7 +340,6 @@ body:
 });
 
 alert("Modification enregistrée 🍷");
-
 closeModal();
 
 setTimeout(()=>{
@@ -347,31 +348,6 @@ location.reload();
 
 }
 
-}
-if(confirm(
-"⚠️ Confirmation\n\n" +
-"Es-tu sûr de vouloir sortir cette bouteille ?\n\n" +
-nomVin + "\n\n" +
-"Le stock sera diminué de 1."
-)){
-    
-fetch(stockUrl, {
-method: "POST",
-mode: "no-cors",
-headers: {
-"Content-Type": "application/x-www-form-urlencoded"
-},
-body: "vin=" + encodeURIComponent(nomVin) + "&action=remove"
-});
-
-alert("Bouteille sortie 🍾");
-closeModal();
-
-setTimeout(()=>{
-location.reload();
-},1500);
-
-}
 }
 
 function filterWine(term){
