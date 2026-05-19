@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Ajouter une bouteille</title>
 
 <link rel="stylesheet" href="style.css">
+
 <script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
+
 </head>
 
 <body>
@@ -15,12 +19,14 @@
 <h1>➕ Ajouter une bouteille</h1>
 
 <div class="actionBox">
+
 <h3>Mode d’ajout</h3>
 
 <select id="modeAjout">
 <option value="manuel">✍️ Ajout manuel</option>
 <option value="photo">📸 Ajout avec photo / OCR</option>
 </select>
+
 </div>
 
 <div class="actionBox" id="photoSection" style="display:none;">
@@ -28,41 +34,121 @@
 <h3>📸 Photos bouteille</h3>
 
 <label>Étiquette avant</label>
-<input type="file" id="photoAvant" accept="image/*" capture="environment">
-<img id="previewAvant" style="width:100%;border-radius:12px;margin-top:10px;display:none;">
+<input
+type="file"
+id="photoAvant"
+accept="image/*"
+capture="environment"
+>
+
+<img
+id="previewAvant"
+style="
+width:100%;
+border-radius:12px;
+margin-top:10px;
+display:none;
+"
+>
 
 <br><br>
 
 <label>Contre-étiquette optionnelle</label>
-<input type="file" id="photoArriere" accept="image/*" capture="environment">
-<img id="previewArriere" style="width:100%;border-radius:12px;margin-top:10px;display:none;">
+
+<input
+type="file"
+id="photoArriere"
+accept="image/*"
+capture="environment"
+>
+
+<img
+id="previewArriere"
+style="
+width:100%;
+border-radius:12px;
+margin-top:10px;
+display:none;
+"
+>
 
 <br><br>
 
-<button onclick="lireOCR()">🔍 Lecture OCR</button>
+<button onclick="lireOCR()">
+🔍 Lecture OCR
+</button>
 
 <div id="ocrStatus" style="margin-top:10px;"></div>
 
 <h3>Texte détecté</h3>
+
 <div id="ocrResults"></div>
-  
+
 <button onclick="remplirFormulaireOCR()">
 ✅ Remplir le formulaire avec mes choix
 </button>
-  
+
+</div>
+
+<div class="actionBox">
+
+<h3>🤖 Analyse ChatGPT</h3>
+
+<a
+class="addButton"
+target="_blank"
+href="https://chat.openai.com/?q=Analyse%20les%20photos%20de%20cette%20bouteille%20de%20vin%20et%20renvoie%20uniquement%20les%20champs%20au%20format%20suivant%20%3A%0AVin%3A%0AMill%C3%A9sime%3A%0ACouleur%2FType%3A%0AR%C3%A9gion%2FPays%3A%0AContenance%3A%0AParticularit%C3%A9s%3A%0ANotes%20perso%3A"
+>
+🤖 Analyser avec ChatGPT
+</a>
+
+<textarea
+id="chatgptText"
+placeholder="Colle ici la réponse de ChatGPT..."
+style="
+width:100%;
+height:180px;
+border-radius:10px;
+padding:10px;
+box-sizing:border-box;
+"
+></textarea>
+
+<br><br>
+
+<button onclick="remplirDepuisChatGPT()">
+✅ Remplir le formulaire depuis ChatGPT
+</button>
+
 </div>
 
 <div class="actionBox formBox">
 
 <h3>Informations bouteille</h3>
 
-<label>Vin <span class="required">*</span></label>
-<input id="vin" placeholder="Nom du vin">
+<label>
+Vin <span class="required">*</span>
+</label>
 
-<label>Millésime <span class="required">*</span></label>
-<input id="millesime" type="number" placeholder="2020">
+<input
+id="vin"
+placeholder="Nom du vin"
+>
 
-<label>Couleur / Type <span class="required">*</span></label>
+<label>
+Millésime <span class="required">*</span>
+</label>
+
+<input
+id="millesime"
+type="number"
+placeholder="2020"
+>
+
+<label>
+Couleur / Type <span class="required">*</span>
+</label>
+
 <select id="type">
 <option value="">Choisir</option>
 <option>Rouge</option>
@@ -75,10 +161,19 @@
 <option>Autre</option>
 </select>
 
-<label>Région / Pays</label>
-<input id="region" placeholder="Valais, Bordeaux, Toscane...">
+<label>
+Région / Pays
+</label>
 
-<label>Contenance <span class="required">*</span></label>
+<input
+id="region"
+placeholder="Valais, Bordeaux, Toscane..."
+>
+
+<label>
+Contenance <span class="required">*</span>
+</label>
+
 <select id="contenance">
 <option value="">Choisir</option>
 <option>75 cl</option>
@@ -89,10 +184,20 @@
 <option>Autre</option>
 </select>
 
-<label>Quantité <span class="required">*</span></label>
-<input id="quantite" type="number" value="1">
+<label>
+Quantité <span class="required">*</span>
+</label>
 
-<label>Emplacement <span class="required">*</span></label>
+<input
+id="quantite"
+type="number"
+value="1"
+>
+
+<label>
+Emplacement <span class="required">*</span>
+</label>
+
 <select id="emplacement">
 <option value="">Choisir</option>
 <option>Frigo buanderie</option>
@@ -100,21 +205,50 @@
 <option>Cave à voûte</option>
 </select>
 
-<label>Particularités</label>
-<input id="particularites" placeholder="Grand Cru, Bio, Rare...">
+<label>
+Particularités
+</label>
 
-<label>🎁 Offert par</label>
-<input id="offertPar" placeholder="Nom de la personne">
+<input
+id="particularites"
+placeholder="Grand Cru, Bio, Rare..."
+>
 
-<label>💰 Prix estimé</label>
-<input id="prix" type="number" placeholder="CHF">
+<label>
+🎁 Offert par
+</label>
 
-<label>📝 Notes perso</label>
-<input id="notes" placeholder="Commentaires personnels">
+<input
+id="offertPar"
+placeholder="Nom de la personne"
+>
 
-<button onclick="ajouterBouteille()">🍷 Ajouter à la cave</button>
+<label>
+💰 Prix estimé
+</label>
 
-<a href="index.html" class="addButton">⬅ Retour à la cave</a>
+<input
+id="prix"
+type="number"
+placeholder="CHF"
+>
+
+<label>
+📝 Notes perso
+</label>
+
+<input
+id="notes"
+placeholder="Commentaires personnels"
+>
+
+<button onclick="ajouterBouteille()">
+🍷 Ajouter à la cave
+</button>
+
+<a href="index.html" class="addButton">
+⬅ Retour à la cave
+</a>
 
 </div>
 
