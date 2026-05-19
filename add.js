@@ -250,3 +250,24 @@ alert("🍷 Bouteille ajoutée à la cave");
 window.location.href = "index.html";
 
 }
+
+function remplirDepuisChatGPT(){
+
+const texte = document.getElementById("chatgptText").value;
+
+function valeur(champ){
+const regex = new RegExp(champ + "\\s*:\\s*(.*)", "i");
+const match = texte.match(regex);
+return match ? match[1].trim() : "";
+}
+
+if(valeur("Vin")) document.getElementById("vin").value = valeur("Vin");
+if(valeur("Millésime")) document.getElementById("millesime").value = valeur("Millésime");
+if(valeur("Couleur\\/Type")) document.getElementById("type").value = valeur("Couleur\\/Type");
+if(valeur("Région\\/Pays")) document.getElementById("region").value = valeur("Région\\/Pays");
+if(valeur("Contenance")) document.getElementById("contenance").value = valeur("Contenance");
+if(valeur("Particularités")) document.getElementById("particularites").value = valeur("Particularités");
+if(valeur("Notes perso")) document.getElementById("notes").value = valeur("Notes perso");
+
+alert("Formulaire rempli avec la réponse ChatGPT 🍷");
+}
