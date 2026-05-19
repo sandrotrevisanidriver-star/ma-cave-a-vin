@@ -95,11 +95,15 @@ function updateStats(wines){
   `;
 }
 
+let fullHistory = [];
+
 async function loadHistory(){
   try{
     const response = await fetch(getHistoryUrl(), { cache: "no-store" });
     const data = await response.json();
-    const derniers = data.slice(-5).reverse();
+
+    fullHistory = data.slice().reverse();
+    const derniers = fullHistory.slice(0, 3);
 
     document.getElementById("historyBox").innerHTML = `
       <h3>📜 Derniers mouvements</h3>
@@ -115,12 +119,34 @@ async function loadHistory(){
         `).join("")
         : "Aucun mouvement pour l’instant."
       }
+      <button onclick="openHistoryModal()">Voir tout l’historique</button>
     `;
   }
   catch(error){
     document.getElementById("historyBox").innerHTML =
       "Historique indisponible pour le moment.";
   }
+}
+
+function openHistoryModal(){
+  document.getElementById("modalContent").innerHTML = `
+    <h2>📜 Historique complet</h2>
+    ${
+      fullHistory.length
+      ? fullHistory.map(item => `
+        <div class="info">
+          ${item["Date"] || ""}<br>
+          <b>${item["Action"] || ""}</b> — ${item["Vin"] || ""}<br>
+          ${item["Emplacement source"] || ""}
+          ${item["Emplacement destination"] ? " → " + item["Emplacement destination"] : ""}
+        </div><hr>
+      `).join("")
+      : "Aucun historique."
+    }
+    <button class="close" onclick="closeModal()">Fermer</button>
+  `;
+
+  document.getElementById("wineModal").style.display = "block";
 }
 
 function scoreRepas(vin, repas){
