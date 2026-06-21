@@ -299,9 +299,8 @@ async function loadWines(){
 
   allWines = data;
 
-  updateStats(allWines);
   buildCaveSelect();
-  renderWines(allWines);
+  applyFilters();
   loadHistory();
 }
 
@@ -470,6 +469,7 @@ function updateField(vin, emplacement, field, value){
   closeModal();
 
   setTimeout(()=>{ loadWines(); },3000);
+  setTimeout(()=>{ loadWines(); },7000);
 }
 
 function filterWine(term){
