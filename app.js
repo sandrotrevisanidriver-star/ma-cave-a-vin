@@ -523,3 +523,49 @@ login.style.display = "none";
 }
 
 });
+function getHistoryUrl(){
+  return `https://opensheet.elk.sh/${sheetID}/Historique`;
+}
+
+async function loadHistory(){
+
+  try{
+
+    const response = await fetch(
+      getHistoryUrl(),
+      { cache:"no-store" }
+    );
+
+    const data = await response.json();
+
+    const derniers =
+      data.slice(-3).reverse();
+
+    document.getElementById("historyBox").innerHTML =
+
+      "<h3>📜 Derniers mouvements</h3>" +
+
+      derniers.map(item => `
+
+        <div style="margin-bottom:10px;">
+
+        ${item["Date"] || ""}<br>
+
+        <b>${item["Action"] || ""}</b><br>
+
+        ${item["Vin"] || ""}
+
+        </div>
+
+      `).join("");
+
+  }
+
+  catch(error){
+
+    document.getElementById("historyBox").innerHTML =
+      "Historique indisponible.";
+
+  }
+
+}
