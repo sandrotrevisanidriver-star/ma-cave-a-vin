@@ -261,10 +261,22 @@ function openModal(vin){
       ⭐ Particularités : ${vin["Particularités"] || ""}<br>
       💰 Prix estimé : ${vin["Prix estimé"] || ""} CHF<br>
       💵 Valeur ligne : ${vin["Valeur ligne"] || ""} CHF<br>
-      🎁 Offert par : ${vin["Offert par"] || ""}<br>
+
+      🎁 Offert par : ${vin["Offert par"] || ""}
+      <br>
+      <button class="close gold" onclick='modifierOffertPar(${JSON.stringify(vin["Vin"] || "")}, ${JSON.stringify(vin["Emplacement"] || "")}, ${JSON.stringify(vin["Offert par"] || "")})'>
+        ✏️ Modifier offert par
+      </button>
+      <br>
+
       🎉 Occasion : ${vin["Occasion"] || ""}<br>
       📥 Date d’entrée : ${vin["Date d’entrée"] || ""}<br>
+
       📝 Notes perso : ${vin["Notes perso"] || ""}
+      <br>
+      <button class="close gold" onclick='modifierNotesPerso(${JSON.stringify(vin["Vin"] || "")}, ${JSON.stringify(vin["Emplacement"] || "")}, ${JSON.stringify(vin["Notes perso"] || "")})'>
+        ✏️ Modifier notes perso
+      </button>
     </div>
 
     <h3>🔔 Alerte de garde</h3>
@@ -568,4 +580,38 @@ async function loadHistory(){
 
   }
 
+}
+
+function modifierOffertPar(vin, emplacement, valeurActuelle){
+
+  const nouveau = prompt(
+    "🎁 Offert par :",
+    valeurActuelle || ""
+  );
+
+  if(nouveau === null) return;
+
+  alert(
+    "Test OK 🍷\n\n" +
+    "Vin : " + vin + "\n" +
+    "Emplacement : " + emplacement + "\n" +
+    "Offert par : " + nouveau
+  );
+}
+
+function modifierNotesPerso(vin, emplacement, valeurActuelle){
+
+  const nouveau = prompt(
+    "📝 Notes perso :",
+    valeurActuelle || ""
+  );
+
+  if(nouveau === null) return;
+
+  alert(
+    "Test OK 🍷\n\n" +
+    "Vin : " + vin + "\n" +
+    "Emplacement : " + emplacement + "\n" +
+    "Notes : " + nouveau
+  );
 }
