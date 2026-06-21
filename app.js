@@ -11,6 +11,7 @@ function getHistoryUrl(){
 const stockUrl = "https://script.google.com/macros/s/AKfycbweDQoeUCJ6nwF-zasiRK3iDD77IhOM0Voi45TcghmWhHvkihOfW3FVRkJvCOwf3_91/exec";
 
 let allWines = [];
+let fullHistory = [];
 
 function texteVin(vin){
   return (
@@ -57,115 +58,97 @@ function garde(vin){
 
   if(texte.includes("champagne")) return age >= 10 ? "🔔 À boire bientôt." : "✅ Encore quelques années possibles.";
   if(texte.includes("blanc")) return age >= 6 ? "🔔 À boire maintenant." : "✅ Encore frais.";
+
   if(texte.includes("bordeaux") || texte.includes("barolo") || texte.includes("grand cru")){
     if(age >= 12) return "🔔 Très belle fenêtre de dégustation.";
     if(age >= 6) return "✅ Peut commencer à être ouvert.";
     return "⏳ Peut encore attendre.";
   }
+
   if(texte.includes("rouge")){
     if(age >= 8) return "🔔 À boire bientôt.";
     if(age >= 4) return "✅ Bon moment pour ouvrir.";
     return "⏳ Encore jeune.";
   }
+
   return "ℹ️ À vérifier selon le vin.";
 }
 
 function updateStats(wines){
+  let total = 0;
+  let rouges = 0;
+  let blancs = 0;
+  let champagnes = 0;
+  let mousseux = 0;
+  let liquoreux = 0;
+  let valeurTotale = 0;
+  let valeurCaveVoute = 0;
+  let valeurCaveBuanderie = 0;
+  let valeurFrigo = 0;
 
-let total = 0;
+  wines.forEach(vin=>{
+    const qte = Number(vin["Quantité"] || 0);
+    const type = (vin["Couleur/Type"] || "").toLowerCase();
+    const prix = Number(vin["Prix estimé"] || 0);
+    const emplacement = (vin["Emplacement"] || "").toLowerCase();
 
-let rouges = 0;
-let blancs = 0;
-let champagnes = 0;
-let mousseux = 0;
-let liquoreux = 0;
+    total += qte;
+    valeurTotale += prix * qte;
 
-let valeurTotale = 0;
+    if(type.includes("rouge")) rouges += qte;
+    if(type.includes("blanc")) blancs += qte;
+    if(type.includes("champagne")) champagnes += qte;
+    if(type.includes("mousseux") || type.includes("pétillant") || type.includes("petillant")) mousseux += qte;
+    if(type.includes("liquoreux") || type.includes("moelleux") || type.includes("doux")) liquoreux += qte;
 
-let valeurCaveVoute = 0;
-let valeurCaveBuanderie = 0;
-let valeurFrigo = 0;
+    if(emplacement.includes("voûte")) valeurCaveVoute += prix * qte;
+    if(emplacement.includes("cave buanderie")) valeurCaveBuanderie += prix * qte;
+    if(emplacement.includes("frigo")) valeurFrigo += prix * qte;
+  });
 
-wines.forEach(vin=>{
+  const prixMoyen = total > 0 ? (valeurTotale / total).toFixed(2) : 0;
 
-const qte = Number(vin["Quantité"] || 0);
+  document.getElementById("statsBox").innerHTML = `
+    🍾 Total : ${total} bouteilles<br>
+    🍷 Rouges : ${rouges}<br>
+    🥂 Blancs : ${blancs}<br>
+    🍾 Champagnes : ${champagnes}<br>
+    ✨ Mousseux : ${mousseux}<br>
+    🍯 Liquoreux : ${liquoreux}<br><br>
 
-const type = (vin["Couleur/Type"] || "").toLowerCase();
+    💰 Valeur totale : ${valeurTotale.toFixed(2)} CHF<br>
+    🏠 Cave à voûte : ${valeurCaveVoute.toFixed(2)} CHF<br>
+    🏠 Cave buanderie : ${valeurCaveBuanderie.toFixed(2)} CHF<br>
+    🏠 Frigo buanderie : ${valeurFrigo.toFixed(2)} CHF<br><br>
 
-const prix = Number(vin["Prix estimé"] || 0);
-
-const emplacement =
-(vin["Emplacement"] || "").toLowerCase();
-
-total += qte;
-
-valeurTotale += prix * qte;
-
-if(type.includes("rouge")) rouges += qte;
-
-if(type.includes("blanc")) blancs += qte;
-
-if(type.includes("champagne")) champagnes += qte;
-
-if(
-type.includes("mousseux") ||
-type.includes("pétillant") ||
-type.includes("petillant")
-){
-mousseux += qte;
+    📊 Prix moyen bouteille : ${prixMoyen} CHF
+  `;
 }
 
-if(
-type.includes("liquoreux") ||
-type.includes("moelleux") ||
-type.includes("doux")
-){
-liquoreux += qte;
+async function loadHistory(){
+  try{
+    const response = await fetch(getHistoryUrl(), { cache:"no-store" });
+    const data = await response.json();
+
+    fullHistory = data.slice().reverse();
+    const derniers = fullHistory.slice(0, 3);
+
+    document.getElementById("historyBox").innerHTML =
+      "<h3>📜 Derniers mouvements</h3>" +
+      derniers.map(item => `
+        <div style="margin-bottom:10px;">
+          ${item["Date"] || ""}<br>
+          <b>${item["Action"] || ""}</b><br>
+          ${item["Vin"] || ""}
+        </div>
+      `).join("") +
+      `<button onclick="openHistoryModal()">Voir tout l’historique</button>`;
+  }
+  catch(error){
+    document.getElementById("historyBox").innerHTML = "Historique indisponible.";
+  }
 }
 
-if(emplacement.includes("voûte")){
-valeurCaveVoute += prix * qte;
-}
-
-if(emplacement.includes("cave buanderie")){
-valeurCaveBuanderie += prix * qte;
-}
-
-if(emplacement.includes("frigo")){
-valeurFrigo += prix * qte;
-}
-
-});
-
-const prixMoyen =
-total > 0
-? (valeurTotale / total).toFixed(2)
-: 0;
-
-document.getElementById("statsBox").innerHTML = `
-
-🍾 Total : ${total} bouteilles<br>
-
-🍷 Rouges : ${rouges}<br>
-🥂 Blancs : ${blancs}<br>
-🍾 Champagnes : ${champagnes}<br>
-✨ Mousseux : ${mousseux}<br>
-🍯 Liquoreux : ${liquoreux}<br><br>
-
-💰 Valeur totale : ${valeurTotale.toFixed(2)} CHF<br>
-
-🏠 Cave à voûte : ${valeurCaveVoute.toFixed(2)} CHF<br>
-
-🏠 Cave buanderie : ${valeurCaveBuanderie.toFixed(2)} CHF<br>
-
-🏠 Frigo buanderie : ${valeurFrigo.toFixed(2)} CHF<br><br>
-
-📊 Prix moyen bouteille :
-${prixMoyen} CHF
-
-`;
-
-}
 function openHistoryModal(){
   document.getElementById("modalContent").innerHTML = `
     <h2>📜 Historique complet</h2>
@@ -231,8 +214,7 @@ function suggestMeal(){
   if(choix){
     afficherSuggestion(choix.vin, "🍽️ Suggestion :");
   } else {
-    document.getElementById("suggestionBox").innerHTML =
-      "Aucun accord évident trouvé dans la cave.";
+    document.getElementById("suggestionBox").innerHTML = "Aucun accord évident trouvé dans la cave.";
   }
 }
 
@@ -262,18 +244,15 @@ function openModal(vin){
       💰 Prix estimé : ${vin["Prix estimé"] || ""} CHF<br>
       💵 Valeur ligne : ${vin["Valeur ligne"] || ""} CHF<br>
 
-      🎁 Offert par : ${vin["Offert par"] || ""}
-      <br>
+      🎁 Offert par : ${vin["Offert par"] || ""}<br>
       <button class="close gold" onclick='modifierOffertPar(${JSON.stringify(vin["Vin"] || "")}, ${JSON.stringify(vin["Emplacement"] || "")}, ${JSON.stringify(vin["Offert par"] || "")})'>
         ✏️ Modifier offert par
-      </button>
-      <br>
+      </button><br>
 
       🎉 Occasion : ${vin["Occasion"] || ""}<br>
       📥 Date d’entrée : ${vin["Date d’entrée"] || ""}<br>
 
-      📝 Notes perso : ${vin["Notes perso"] || ""}
-      <br>
+      📝 Notes perso : ${vin["Notes perso"] || ""}<br>
       <button class="close gold" onclick='modifierNotesPerso(${JSON.stringify(vin["Vin"] || "")}, ${JSON.stringify(vin["Emplacement"] || "")}, ${JSON.stringify(vin["Notes perso"] || "")})'>
         ✏️ Modifier notes perso
       </button>
@@ -455,153 +434,24 @@ function gererBouteille(nomVin, emplacement){
     alert("Modification enregistrée 🍷");
     closeModal();
 
-    setTimeout(()=>{
-      loadWines();
-    },3000);
-
-    setTimeout(()=>{
-      loadWines();
-    },7000);
+    setTimeout(()=>{ loadWines(); },3000);
+    setTimeout(()=>{ loadWines(); },7000);
   }
-}
-
-function filterWine(term){
-  document.querySelectorAll(".card").forEach(card=>{
-    card.style.display = card.innerText.includes(term) || term === "" ? "block" : "none";
-  });
-}
-
-document.getElementById("search").addEventListener("keyup", applyFilters);
-
-document.getElementById("wineModal").addEventListener("click", function(e){
-  if(e.target.id === "wineModal"){
-    closeModal();
-  }
-});
-
-loadWines();
-
-function resetFilters(){
-
-document.getElementById("search").value = "";
-
-document.getElementById("caveSelect").value = "";
-
-document.getElementById("mealSelect").value = "";
-
-renderWines(allWines);
-
-updateStats(allWines);
-
-document.getElementById("suggestionBox").innerHTML =
-"Choisis une cave, un repas ou demande une suggestion 🍷";
-
-}
-
-const PASSWORD = "Vin2026%";
-
-function checkPassword(){
-
-const input =
-document.getElementById("passwordInput").value;
-
-if(input === PASSWORD){
-
-localStorage.setItem("wineAuth", "ok");
-
-document.getElementById("loginScreen").style.display =
-"none";
-
-}
-else{
-
-alert("Mot de passe incorrect 🍷");
-
-}
-
-}
-
-window.addEventListener("load", ()=>{
-
-if(localStorage.getItem("wineAuth") === "ok"){
-
-const login =
-document.getElementById("loginScreen");
-
-if(login){
-login.style.display = "none";
-}
-
-}
-
-});
-function getHistoryUrl(){
-  return `https://opensheet.elk.sh/${sheetID}/Historique`;
-}
-
-async function loadHistory(){
-
-  try{
-
-    const response = await fetch(
-      getHistoryUrl(),
-      { cache:"no-store" }
-    );
-
-    const data = await response.json();
-
-    const derniers =
-      data.slice(-3).reverse();
-
-    document.getElementById("historyBox").innerHTML =
-
-      "<h3>📜 Derniers mouvements</h3>" +
-
-      derniers.map(item => `
-
-        <div style="margin-bottom:10px;">
-
-        ${item["Date"] || ""}<br>
-
-        <b>${item["Action"] || ""}</b><br>
-
-        ${item["Vin"] || ""}
-
-        </div>
-
-      `).join("");
-
-  }
-
-  catch(error){
-
-    document.getElementById("historyBox").innerHTML =
-      "Historique indisponible.";
-
-  }
-
 }
 
 function modifierOffertPar(vin, emplacement, valeurActuelle){
-
-  const nouveau = prompt(
-    "🎁 Offert par :",
-    valeurActuelle || ""
-  );
-
+  const nouveau = prompt("🎁 Offert par :", valeurActuelle || "");
   if(nouveau === null) return;
+  updateField(vin, emplacement, "Offert par", nouveau);
+}
 
-  updateField(
-    vin,
-    emplacement,
-    "Offert par",
-    nouveau
-  );
-
+function modifierNotesPerso(vin, emplacement, valeurActuelle){
+  const nouveau = prompt("📝 Notes perso :", valeurActuelle || "");
+  if(nouveau === null) return;
+  updateField(vin, emplacement, "Notes perso", nouveau);
 }
 
 function updateField(vin, emplacement, field, value){
-
   const data = new URLSearchParams();
 
   data.append("action", "updateField");
@@ -617,11 +467,58 @@ function updateField(vin, emplacement, field, value){
   });
 
   alert("Modification enregistrée 🍷");
-
   closeModal();
 
-  setTimeout(()=>{
-    loadWines();
-  },3000);
-
+  setTimeout(()=>{ loadWines(); },3000);
 }
+
+function filterWine(term){
+  document.querySelectorAll(".card").forEach(card=>{
+    card.style.display = card.innerText.includes(term) || term === "" ? "block" : "none";
+  });
+}
+
+function resetFilters(){
+  document.getElementById("search").value = "";
+  document.getElementById("caveSelect").value = "";
+  document.getElementById("mealSelect").value = "";
+
+  renderWines(allWines);
+  updateStats(allWines);
+
+  document.getElementById("suggestionBox").innerHTML =
+    "Choisis une cave, un repas ou demande une suggestion 🍷";
+}
+
+const PASSWORD = "Vin2026%";
+
+function checkPassword(){
+  const input = document.getElementById("passwordInput").value;
+
+  if(input === PASSWORD){
+    localStorage.setItem("wineAuth", "ok");
+    document.getElementById("loginScreen").style.display = "none";
+  }
+  else{
+    alert("Mot de passe incorrect 🍷");
+  }
+}
+
+window.addEventListener("load", ()=>{
+  if(localStorage.getItem("wineAuth") === "ok"){
+    const login = document.getElementById("loginScreen");
+    if(login){
+      login.style.display = "none";
+    }
+  }
+});
+
+document.getElementById("search").addEventListener("keyup", applyFilters);
+
+document.getElementById("wineModal").addEventListener("click", function(e){
+  if(e.target.id === "wineModal"){
+    closeModal();
+  }
+});
+
+loadWines();
