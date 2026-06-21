@@ -582,7 +582,7 @@ async function loadHistory(){
 
 }
 
-function modifierOffertPar(vin, emplacement, valeurActuelle){
+ffunction modifierOffertPar(vin, emplacement, valeurActuelle){
 
   const nouveau = prompt(
     "🎁 Offert par :",
@@ -591,27 +591,37 @@ function modifierOffertPar(vin, emplacement, valeurActuelle){
 
   if(nouveau === null) return;
 
-  alert(
-    "Test OK 🍷\n\n" +
-    "Vin : " + vin + "\n" +
-    "Emplacement : " + emplacement + "\n" +
-    "Offert par : " + nouveau
+  updateField(
+    vin,
+    emplacement,
+    "Offert par",
+    nouveau
   );
+
 }
 
-function modifierNotesPerso(vin, emplacement, valeurActuelle){
+function updateField(vin, emplacement, field, value){
 
-  const nouveau = prompt(
-    "📝 Notes perso :",
-    valeurActuelle || ""
-  );
+  const data = new URLSearchParams();
 
-  if(nouveau === null) return;
+  data.append("action", "updateField");
+  data.append("vin", vin);
+  data.append("emplacement", emplacement);
+  data.append("field", field);
+  data.append("value", value);
 
-  alert(
-    "Test OK 🍷\n\n" +
-    "Vin : " + vin + "\n" +
-    "Emplacement : " + emplacement + "\n" +
-    "Notes : " + nouveau
-  );
+  fetch(stockUrl,{
+    method:"POST",
+    mode:"no-cors",
+    body:data
+  });
+
+  alert("Modification enregistrée 🍷");
+
+  closeModal();
+
+  setTimeout(()=>{
+    loadWines();
+  },3000);
+
 }
