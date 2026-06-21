@@ -582,7 +582,7 @@ async function loadHistory(){
 
 }
 
-ffunction modifierOffertPar(vin, emplacement, valeurActuelle){
+function modifierOffertPar(vin, emplacement, valeurActuelle){
 
   const nouveau = prompt(
     "🎁 Offert par :",
